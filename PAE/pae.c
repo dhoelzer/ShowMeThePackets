@@ -10,7 +10,7 @@
  */
 
 /*
- *  This code takes a TCPDump output file and allows you to
+ *  This code takes a libpcap compatible file and allows you to
  *  perform some statistical analysis against the packets.
  *  The idea is that "interesting" communication channels
  *  may be revealed by identifying portions of packets that
@@ -120,6 +120,7 @@ int main(int argc, char **argv)
 {
   char option;
   u_char buffer[4096];
+  unsigned int modify_significant_bytes = 0;
 
   // Clear our vars
   strcpy(source_file, "");
@@ -133,9 +134,9 @@ int main(int argc, char **argv)
   significant_bytes = 32;
 
   // Get command line args
-  for(option = getopt(argc, argv, "qscdSihr:a:");
+  for(option = getopt(argc, argv, "qscdSihr:a:b:");
       option != -1;
-      option = getopt(argc, argv, "qscdSihr:a:"))
+      option = getopt(argc, argv, "qscdSihr:a:b:"))
     {
       switch(option)
 	{
@@ -157,6 +158,9 @@ int main(int argc, char **argv)
 	case 'a' :
 	  sscanf(optarg, "%f", &anomalosity);
 	  break;
+  case 'b':
+    sscanf(optarg, "%d", &modify_significant_bytes);
+    break;
 	case 's' :
 	  flags |= SRC_PORTS;
 	  significant_bytes = 2;
@@ -176,7 +180,10 @@ int main(int argc, char **argv)
 	default : usage();
 	}
     }
-  
+  // Added logic to allow you to limit or expand the size of the hashed value/unique payload length.
+  if(significant_bytes == 32 && modify_significant_bytes > 0 && modify_significant_bytes < 64){
+    significant_bytes = modify_significant_bytes;
+  }
   if(!(flags & QUIET)) 
     printf("Packet Analysis Engine Version %s\nCopyright 2001, 2018, David Hoelzer\n",
 	 VERSION);
@@ -284,6 +291,8 @@ pcap_handler analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned c
   if((data + significant_bytes) > 
      (ip_header + ntohs(*((unsigned short int *)ip_header+1))))
     {
+      // TODO: This should be modified, especially for Payload options, to pad the payload out.
+      // Still, we shouldn't pad a packet that has zero data.
       if(!(flags & QUIET)) printf("Not enough data!\n");
       return 0;
     }
