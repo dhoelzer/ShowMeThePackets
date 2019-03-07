@@ -1,6 +1,6 @@
 /*
  *
- *  This code is Copyright (C) 2001, 2018, David Hoelzer
+ *  This code is Copyright (C) 2001, 2018, 2019, David Hoelzer
  *  Please feel free to make modifications to this code, however,
  *  license is -not- granted for redistribution of modifications
  *  or of modified code.  License is granted for all non-commercial
@@ -23,12 +23,13 @@
  *  libpcap 0.4 (or higher) is required.
  */
 
-#define VERSION "0.6"
+#define VERSION "0.7"
 // Rev 0.1 - Initial Release
 // Rev 0.5 - Added checksum support
 //    We have developed a suspicion that there are checksums that will almost never appear
 //    and others that will be quite common.  Thought we'd add something to test this out.
 // Rev 0.6 - Added more detailed help as requested.
+// Rev 0.7 - Expand payload analysis options; sort output by default.
 
 
 #include<stdio.h>
@@ -37,6 +38,8 @@
 #include<stdlib.h>
 #include<time.h>
 #include<math.h>
+#include<ctype.h>
+#include<strings.h>
 
 #define GOT_SOURCE 1
 #define SRC_PORTS  2
@@ -51,7 +54,7 @@
 
 struct root_struct
 {
-  unsigned char key[KEYLENGTH];
+  char key[KEYLENGTH];
   unsigned int count;
   int hash_value;
   struct root_struct *next_root, *prev_root;
@@ -61,11 +64,11 @@ void DEBUG(char *debug_string);
 float standard_deviation(struct root_struct *ptr);
 unsigned int hash(char *key);
 void print_results(struct root_struct *ptr);
-struct root_struct *find_root(unsigned char key[KEYLENGTH],
+struct root_struct *find_root(char key[KEYLENGTH],
 			      struct root_struct *master_root);
 void insert(struct root_struct *insertme);
 struct root_struct *new_root();
-pcap_handler analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned char *packet);
+void analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned char *packet);
 void usage();
 int get_header_length(unsigned char *packet);
 float average(struct root_struct *ptr);
@@ -93,7 +96,7 @@ void DEBUG(char *debug_string)
 
 unsigned int hash(char *key)
 {
-  unsigned char chars[KEYLENGTH];
+  char chars[KEYLENGTH];
   unsigned int hashval;
   int x;
 
@@ -235,7 +238,7 @@ int main(int argc, char **argv)
   print_results(root);
 }
 
-pcap_handler analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned char *packet)
+void analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned char *packet)
 {
   /*
     Assumption:  We are only worried about Ethernet
@@ -294,9 +297,9 @@ pcap_handler analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned c
       // TODO: This should be modified, especially for Payload options, to pad the payload out.
       // Still, we shouldn't pad a packet that has zero data.
       if(!(flags & QUIET)) printf("Not enough data!\n");
-      return 0;
+      return;
     }
-  ptr = find_root(data, root);
+  ptr = find_root((char*)data, root);
   DEBUG("Root found");
   if(ptr == NULL)
     {
@@ -306,7 +309,7 @@ pcap_handler analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned c
       sigs++;
       memcpy(ptr->key, data, significant_bytes);
       DEBUG("Completed memcpy");
-      hash_value = hash(data);
+      hash_value = hash((char*)data);
       ptr -> hash_value = hash_value;
       if(root == NULL)
 	{ 
@@ -417,7 +420,7 @@ struct root_struct *new_root()
   return node;
 }
 
-struct root_struct *find_root(unsigned char key[KEYLENGTH],
+struct root_struct *find_root(char key[KEYLENGTH],
 			      struct root_struct *master_root)
 {
   struct root_struct *ptr;
@@ -537,25 +540,11 @@ void print_results(struct root_struct *ptr)
     }
     average_count = average(ptr);
     median = get_median(ptr);
-    /*
-    if(!(flags & (SEQ_NUMS | IPIDS | SRC_PORTS | DST_PORTS | SRC_HOSTS)))
-    {
-      average_count = (average_count + 2) * 100; 
-    }
-  if(flags & (SRC_HOSTS | SRC_PORTS | DST_PORTS))
-    {
-      average_count = (average_count + 2) * 50;
-    }
-  if(flags & SEQ_NUMS) 
-    {
-      average_count = (average_count * 1000);
-    }
-  if(flags & IPIDS)
-    {
-      average_count = average_count * 2;
-    }
-  */
     std_dev=standard_deviation(root);
+    int range = anomalosity * std_dev;
+    int top = average_count + range;
+    int bottom = average_count - range;
+    printf("Bottom: %d Top: %d Range: %d Average: %d Standard Deviation: %f\n", bottom, top, range, average_count, std_dev);
   lasthash = ptr -> hash_value;
   hashes ++;
   while(ptr)
@@ -569,18 +558,16 @@ void print_results(struct root_struct *ptr)
     	  if(bmin > bucket_reuse) bmin = bucket_reuse;
     	  bucket_reuse = 0;
     	}
-//      if(abs(ptr -> count - median) > ((std_dev * anomalosity) ))
     	{
     	  gt100 ++;
     	  if(!(flags & (SEQ_NUMS | IPIDS | SRC_PORTS | DST_PORTS | SRC_HOSTS | CHECKSUM)))
     	 {
-    	      if(ptr->count > anomalosity){
+    	      if((int)ptr->count > top || (int)ptr->count < bottom){
       	      printf("+-------------------------------------------"\
       		     "--------------------------------------------+\n");
       	      for(x=0;x!=significant_bytes;x++)
           		{
-          		  printf("%s%x ", (ptr->key[x] < 16 ? "0" : ""),
-          			 (unsigned char)(ptr->key[x]));
+          		  printf("%02x ", (unsigned char)(ptr->key[x]));
           		}
       	      printf("\n");
       	      for(x=0;x!=significant_bytes;x++)
@@ -604,7 +591,7 @@ void print_results(struct root_struct *ptr)
 	    {
 	      unsigned long int seq;
 	      seq = ntohl(((unsigned long int *)ptr->key)[0]);
-	      printf("%u\n",seq);
+	      printf("%lu\n",seq);
 	    }
 	  if(flags & SRC_HOSTS)
 	    {
@@ -623,7 +610,7 @@ void print_results(struct root_struct *ptr)
   if(!(flags & QUIET))
     {
       printf("Hashes: %d\nHits: %d\nMisses: %d\nSignatures: "\
-	     "%d\nHits > 100: %d\nPackets: %u\n"\
+	     "%d\nHits > 100: %d\nPackets: %lu\n"\
 	     "Efficiency: Max Reuse: %d  Min Reuse: %d\n",
 	     hashes, hash_hits, hash_misses, sigs, gt100, packets, bmax, bmin);
       printf("Standard Deviation: %f Average: %f Median: %f\n",standard_deviation(root),average(root),get_median(root));
