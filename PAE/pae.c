@@ -40,6 +40,7 @@
 #include<math.h>
 #include<ctype.h>
 #include<strings.h>
+#include<string.h>
 
 #define GOT_SOURCE 1
 #define SRC_PORTS  2
@@ -188,7 +189,7 @@ int main(int argc, char **argv)
     significant_bytes = modify_significant_bytes;
   }
   if(!(flags & QUIET)) 
-    printf("Packet Analysis Engine Version %s\nCopyright 2001, 2018, David Hoelzer\n",
+    printf("Packet Analysis Engine Version %s\nCopyright 2001-2019, David Hoelzer\n",
 	 VERSION);
   // Check for required args:
   if(!flags || !(flags & GOT_SOURCE)) { usage(); }
@@ -250,10 +251,8 @@ void analyze_packets(unsigned char *p, struct pcap_pkthdr *h, unsigned char *pac
 	      counts can be used to deduce frequency.
   */
 
-  unsigned char *ip_header, *saddr, *daddr, *checksum, *chkptr, *data;
-  unsigned int ip_words[64];
-  unsigned int i, header_length, num_words, chksum;
-  unsigned char chkflag;
+  unsigned char *ip_header, *data;
+  unsigned int header_length;
   unsigned int hash_value;
   struct root_struct *ptr;
 
@@ -330,8 +329,6 @@ void insert(struct root_struct *insertme)
 {
   unsigned int hash_value;
   struct root_struct *ptr1, *ptr2;
-  int comparison;
-  int element = 0;
 
   DEBUG("Inserting");
   hash_value = insertme -> hash_value;
@@ -380,7 +377,7 @@ void insert(struct root_struct *insertme)
 
 int get_header_length(unsigned char *packet)
 {
-  unsigned char x, y;
+  unsigned char x;
 
   x = (unsigned char)(*packet);
   //  y = x / 256; /* Shift right 8 bits */
@@ -396,10 +393,11 @@ void usage()
   printf("\t-s\tExtract and count occurrences of discrete source port numbers.\n");
   printf("\t-c\tExtract and count occurrences of discrete IP checksum values.\n");
   printf("\t-d\tExtract and count occurrences of discrete destination port numbers.\n");
-  printf("\t-S\tExtract and count occurrences of discrete TCP sequence numbers\n");
-  printf("\t-q\tSuppress internal hash table statistics information\n");
-  printf("\t-a\tConfigure an 'Anomalosity' value (how anomalous is this?) as a filter for values displayed.\n");
-  printf("\t\tIf given no extraction options, PAE will extract and count discrete occurrences of the first 32 bytes of data\n");
+  printf("\t-S\tExtract and count occurrences of discrete TCP sequence numbers.\n");
+  printf("\t-q\tSuppress internal hash table statistics information.\n");
+  printf("\t-b #\tAllows payload depth to be analyzed between 1 and 64 bytes.\n");
+  printf("\t-a #\tConfigure an 'Anomalosity' value (how anomalous is this?). Defines the width of the notch filter\n\t\tapplied to payload analysis. The value is multiplied by the standard deviation to define \n\t\tthe width of the notch. May be used with the '-b' option.\n");
+  printf("\n\t\tIf given no extraction options, PAE will extract and count discrete occurrences of the first 32 bytes of data\n");
   exit(3);
 }
 
@@ -544,7 +542,7 @@ void print_results(struct root_struct *ptr)
     int range = anomalosity * std_dev;
     int top = average_count + range;
     int bottom = average_count - range;
-    printf("Bottom: %d Top: %d Range: %d Average: %d Standard Deviation: %f\n", bottom, top, range, average_count, std_dev);
+    if(!(flags & QUIET)) { printf("Bottom: %d Top: %d Range: %d Average: %d Standard Deviation: %f\n", bottom, top, range, average_count, std_dev); }
   lasthash = ptr -> hash_value;
   hashes ++;
   while(ptr)

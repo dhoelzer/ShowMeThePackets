@@ -1,2 +1,2 @@
 pae : pae.c
-	gcc pae.c -g -o pae -lpcap -lm
+	gcc pae.c -Wall -O3 -o pae -lpcap -lm
