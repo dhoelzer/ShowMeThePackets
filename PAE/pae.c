@@ -23,13 +23,15 @@
  *  libpcap 0.4 (or higher) is required.
  */
 
-#define VERSION "0.7"
+#define VERSION "0.7.1"
 // Rev 0.1 - Initial Release
 // Rev 0.5 - Added checksum support
 //    We have developed a suspicion that there are checksums that will almost never appear
 //    and others that will be quite common.  Thought we'd add something to test this out.
 // Rev 0.6 - Added more detailed help as requested.
 // Rev 0.7 - Expand payload analysis options; sort output by default.
+// Rev 0.7.1 - Bug fixes:x
+
 
 
 #include<stdio.h>
@@ -185,7 +187,7 @@ int main(int argc, char **argv)
 	}
     }
   // Added logic to allow you to limit or expand the size of the hashed value/unique payload length.
-  if(significant_bytes == 32 && modify_significant_bytes > 0 && modify_significant_bytes < 64){
+  if(significant_bytes == 32 && modify_significant_bytes > 0 && modify_significant_bytes <= 32){
     significant_bytes = modify_significant_bytes;
   }
   if(!(flags & QUIET)) 
@@ -395,7 +397,7 @@ void usage()
   printf("\t-d\tExtract and count occurrences of discrete destination port numbers.\n");
   printf("\t-S\tExtract and count occurrences of discrete TCP sequence numbers.\n");
   printf("\t-q\tSuppress internal hash table statistics information.\n");
-  printf("\t-b #\tAllows payload depth to be analyzed between 1 and 64 bytes.\n");
+  printf("\t-b #\tAllows payload depth to be analyzed between 1 and 32 bytes.\n");
   printf("\t-a #\tConfigure an 'Anomalosity' value (how anomalous is this?). Defines the width of the notch filter\n\t\tapplied to payload analysis. The value is multiplied by the standard deviation to define \n\t\tthe width of the notch. May be used with the '-b' option.\n");
   printf("\n\t\tIf given no extraction options, PAE will extract and count discrete occurrences of the first 32 bytes of data\n");
   exit(3);
