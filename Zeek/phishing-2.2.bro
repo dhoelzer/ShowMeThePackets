@@ -1,5 +1,5 @@
 # Example behavior detection script for Bro-IDS
-# Available from http://github.com/dhoelzer/AuditcastsScripts/Bro
+# Available from http://github.com/dhoelzer/ShowMeThePackets/Bro
 #
 # Find URLs in MIME content. For all URLs found, record the host name.
 # Identify DNS lookups that involve host names that appeared in MIME data. Record the addresses.
@@ -35,7 +35,7 @@ event http_request(c:connection, method:string, original_URI:string, unescaped_U
 }
 
 
-event connection_SYN_packet(c: connection, pkt: SYN_packet)
+event new_connection(c: connection)
 {
 	if(c$id$resp_h in possible_bad_addresses)
 	{
