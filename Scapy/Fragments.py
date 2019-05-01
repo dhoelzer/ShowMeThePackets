@@ -34,4 +34,11 @@ ip.flags=0
 packet3=ip/'RRAAGGFFRRAAGGFF'
 send(packet1)
 send(packet3)
-send(packet2)
+r=sr1(packet2)
+print "          11111111112222222222333333333344444444445555555555"
+print "012345678901234567890123456789012345678901234567890123456789"
+print
+print "ICMPICMPFRAGMENTFFRRAAGG"
+print "                                RRAAGGFFRRAAGGFF"
+print "                GGAARRFFGGAARRFFGGAARRFF"
+print r.payload
