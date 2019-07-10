@@ -21,7 +21,7 @@ def spoofIsAt(pkt):
 
 def spoofSYNACK(pkt):
   # Spoof the SYN ACK with a small window
-  if (pkt[IP].src in answered and answered[pkt[IP].src] == pkt[IP].sport):
+  if (pkt[IP].src in answered and answered[pkt[IP].src] == pkt[IP].dport):
     return
   response = IP()/TCP()
   response[IP].src = pkt[IP].dst  # Since Ether also has a .src, we have to qualify
@@ -33,7 +33,7 @@ def spoofSYNACK(pkt):
   response[TCP].window = random.randint(1,100)
   response[TCP].flags = 0x12
   send(response, verbose = 0)
-  answered[response[IP].dst] = response[TCP].dport
+  answered[response[IP].dst] = response[TCP].sport
 
 
 def spoofACK(pkt):
