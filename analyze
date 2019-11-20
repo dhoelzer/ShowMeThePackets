@@ -1,0 +1,119 @@
+#!/bin/bash
+
+function copyright {
+cat << EOF
+
+
+Copyright 2008-2019 Enclave Forensics, Inc / David Hoelzer
+
+As of January 1, 2020, this script is released into the public domain under the following
+terms.  You may freely use this script for both personal and commercial purposes, but any
+product or service that makes use of this script in whole or in part must bear a clear and
+obvious attribution to the copyright owner(s).
+
+You may freely redistribute this script provided that you do not remove this copyright
+notice and license.
+
+
+
+EOF
+}
+
+
+PACKETPATH=/sec503/data/packets
+sensors=$(ls $PACKETPATH)
+bold=$(tput bold)
+normal=$(tput sgr0)
+START="0"
+END="999999999999999"
+SOPT=0
+EOPT=0
+PARAMETERS=""
+
+
+function usage {
+COMMAND=$(basename "$0")
+cat << EOF
+Usage: $COMMAND [-s | --start-date "MM/DD/YYYY hh:mm:ss"] [-e | --end-date "MM/DD/YYYY hh:mm:ss"] sensor
+
+The anayze tool allows you to easily stream all of the relevant packet captures from a sensor as
+a single set of packets regardless of how many original files they are found in within the sensor
+packet repository.  You must provide the sensor from which to retrieve packets as the final
+argument.  All other arguments are optional.
+
+-s | --start-date	Allows you to specify the starting date or time.  If only a date is
+			specified, quotation marks are optional and the date will be extended
+			to be 00:00:00.
+-e | --end-date		Allows you to specify the ending date or time.  If only a date is
+			specified, quotation marks are optional and the date will be extended
+			to be 00:00:00.
+-h | --help		This help.
+
+Provided courtesy David Hoelzer / Enclave Forensics, Inc.
+EOF
+}
+while (("$#")); do
+  case "$1" in
+    -s|--start-date)
+      START=$2
+      SOPT=1
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -e|--end-date)
+      END=$2
+      EOPT=1
+      shift 2
+      ;;
+    -*|--*=)
+      echo "Error: Unsupported argument $1" >&2
+      exit 3
+      ;;
+    *)
+      PARAMETERS="$PARAMS $1"
+      shift
+      ;;
+  esac
+done
+
+if [ $SOPT -gt 0 ] ; then
+  START=$(date --date="$START" +"%s")
+fi
+if [ $EOPT -gt 0 ] ; then
+  END=$(date --date="$END" +"%s")
+fi
+
+if [ $END -le $START ] ; then
+  echo The time window cannot be zero or fewer seconds. >&2
+  exit 5
+fi
+
+SENSOR=${PARAMETERS/ /}
+
+if [ -z $SENSOR ] ; then
+  echo You must supply the name of the sensor that you wish to view packets from!  Valid sensors are [ $bold$sensors $normal] >&2
+  exit 1
+fi
+
+if [ ! -d $PACKETPATH/$SENSOR ] ; then
+  echo $bold$SENSOR$normal is not a valid sensor.  Valid sensors are [ $bold$sensors $normal] >&2
+  exit 2
+fi 
+
+REGEX='($PACKETPATH/$SENSOR/.*\.pcap\.)'
+files=$(ls $PACKETPATH/$SENSOR/dailylogs/*/daemon*)
+toprocess=""
+for name in $files; do
+  timestamp=$(echo $name | sed -e "s/^.*pcap\.//")
+  if [ $timestamp -ge $START ] && [ $timestamp -le $END ] ; then
+    toprocess="$toprocess $name"
+  fi
+done
+if [ -z "$toprocess" ] ; then
+  echo No packets from $SENSOR are in that time range! >&2
+  exit 4
+fi
+mergecap -w - $toprocess
