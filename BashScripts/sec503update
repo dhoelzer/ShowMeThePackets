@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Colored text
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+
+nc -z -w2 -d google.com 443  >/dev/null 2>&1
+online=$?
+if [ $online -eq 0 ]; then
+	echo -e "Online check:  ${GREEN}Verified"
+	# Update SEC503 Workbook
+	pushd /sec503/sec503-f01 > /dev/null 
+	git remote update > /dev/null 2>&1
+	
+	UPSTREAM=${1:-'@{u}'}
+	LOCAL=$(git rev-parse @)
+	REMOTE=$(git rev-parse "$UPSTREAM")
+	BASE=$(git merge-base @ "$UPSTREAM")
+
+	if [ $LOCAL = $REMOTE ]; then
+    		echo -e "${GREEN}The SEC503 Workbook is up-to-date."
+	else
+ 		echo -e "${YELLOW}Updating..."
+		git reset --hard origin/master > /dev/null 2>&1
+		if git pull git@github.com:sans-blue-team/sec503-f01.git > /dev/null 2>&1; then
+			echo -e "${GREEN}The SEC503 Workbook has been updated."
+		else
+			echo -e "${RED}Failed to update the SEC503 Workbook."
+		fi
+	fi
+	popd > /dev/null
+
+	# Update ShowMeThePackets
+	pushd /sec503/ShowMeThePackets > /dev/null
+	git remote update > /dev/null 2>&1
+
+	UPSTREAM=${1:-'@{u}'} 
+	LOCAL=$(git rev-parse @)
+	REMOTE=$(git rev-parse "$UPSTREAM")
+	BASE=$(git merge-base @ "$UPSTREAM")
+
+	if [ $LOCAL = $REMOTE ]; then
+		echo -e "${GREEN}ShowMeThePackets is up-to-date"
+	else
+	        echo -e "${YELLOW}Updating..."
+		git reset --hard origin/master > /dev/null 2>&1
+                if  git pull https://github.com/dhoelzer/ShowMeThePackets.git > /dev/null 2>&1; then
+                        echo -e "${GREEN}ShowMeThePackets has been updated."
+                else
+                        echo -e "${RED}Failed to update ShowMeThePackets."
+                fi
+	fi
+	popd > /dev/null
+
+        # Update SEC503 Core files
+        pushd /sec503 > /dev/null
+        git remote update > /dev/null 2>&1
+
+        UPSTREAM=${1:-'@{u}'}
+        LOCAL=$(git rev-parse @)
+        REMOTE=$(git rev-parse "$UPSTREAM")
+        BASE=$(git merge-base @ "$UPSTREAM")
+
+        if [ $LOCAL = $REMOTE ]; then
+                echo -e "${GREEN}The SEC503 core files are up-to-date."
+        else
+                echo -e "${YELLOW}Updating..."
+                git reset --hard origin/master > /dev/null 2>&1
+                if git pull git@www.showmethepackets.com:StickData.git > /dev/null 2>&1; then
+                        echo -e "${GREEN}The SEC503 core files have been updated."
+                else
+                        echo -e "${RED}Failed to update the SEC503 core files."
+                fi
+        fi
+        popd > /dev/null
+
+else
+	echo -e "${RED}Please check your internet connection."
+fi
