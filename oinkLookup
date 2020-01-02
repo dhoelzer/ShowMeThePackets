@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Author: Jason Brewer
+# Written for parsing Snort logs based on Priority.
+# The returned Snort IDs (SIDs) are then displayed
+# or are displayed with their corresponding Snort Rule.
+
+CMDARGS=${@:1}
+
+function Usage()
+{
+	echo -e "\nUsage: Display Unique SIDS => ${0##*/} -p <priority number>  -l <log file> -s sids <keyword to use>\n
+Usage: Display Rules => ${0##*/} -p <priority number> -l <log file> -r <location of snort rules>\n"
+	exit 1
+}
+
+# Delimiter
+function delimiter()
+{
+	LENGTH=75
+	printf -v line '%*s' "$LENGTH"
+	echo ${line// /#}	
+	echo
+}
+
+# Return Unique SIDS
+function getUniqueSIDS()
+{
+	grep "Priority: $PRIORITY" $LOGFILE | cut -f 4 -d' ' | sort -n | uniq -c | awk -F'[' '{print $1,$2}' | awk -F']' '{print $1,$2}' | awk -F':' '{print $1,$2}' \
+		| awk -F' ' '{print "SID => " $3"\t Found => "$1}' ; exit	
+	
+}
+
+
+# Lookup SIDS in Snort Rules
+function lookupSIDInSnortRules()
+{
+	SIDS=$(grep "Priority: $PRIORITY" $LOGFILE | cut -f 4 -d' ' | sort -n | uniq -c | sort -rn | cut -d':' -f 2)
+	for rule in $(echo $SIDS); do echo -e "\n[ RULE FOR SID -> $rule ]\n"; grep "sid:$rule;" $SNORTRULES; delimiter ; done
+
+}
+
+
+# While the number of cmd args is greater than zero
+while (( $# > 0 ))
+do
+ARG="$1"
+	case $ARG in
+		-p|--priority)
+			PRIORITY="$2"
+			shift
+			shift	
+			;;
+		-l|--logfile)
+			LOGFILE="$2"
+			shift
+			shift
+			;;
+		-s|--sids)
+			SIDS="$2"
+			shift
+			shift
+			if [[ "$SIDS" = "sids" ]]
+			then
+			getUniqueSIDS
+			elif [[ "$SIDS" != "sids" ]]
+			then
+			echo -e "\nUser must enter keyword 'sids' not [*** $SIDS ***]\n"
+			exit
+			fi
+			;;
+		-r|--rules)
+			SNORTRULES="$2"
+			shift
+			shift
+			lookupSIDInSnortRules
+			;;
+		-h|--help)
+			Usage
+			;;
+		*)
+			for flag in "$CMDARGS"; do if [[ "$flag" != "$ARG" ]]
+			then
+			echo -e "\nUser entered an invalid flag => { $flag }\n"
+			fi
+			done
+			exit
+			;;
+
+
+esac
+done
