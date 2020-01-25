@@ -22,8 +22,8 @@ EOF
 
 PACKETPATH=/sec503/data/packets
 sensors=$(ls $PACKETPATH)
-bold=$(tput bold)
-normal=$(tput setaf 2)
+bold=$(tput setaf 2)
+normal=$(tput sgr0)
 START="0"
 END="999999999999999"
 SOPT=0
