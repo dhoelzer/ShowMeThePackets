@@ -36,8 +36,8 @@ COMMAND=$(basename "$0")
 cat << EOF
 Usage: $COMMAND [-s | --start-date "MM/DD/YYYY hh:mm:ss"] [-e | --end-date "MM/DD/YYYY hh:mm:ss"] sensor
 
-The anayze tool allows you to easily stream all of the relevant packet captures from a sensor as
-a single set of packets regardless of how many original files they are found in within the sensor
+The analyze tool allows you to easily stream all of the relevant packet captures from a sensor as
+a single set of packets, regardless of how many original files are found within the sensor
 packet repository.  You must provide the sensor from which to retrieve packets as the final
 argument.  All other arguments are optional.
 
