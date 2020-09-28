@@ -69,7 +69,7 @@ void func(int sockfd)
 // Driver function 
 int main(int argc, char **argv) 
 { 
-    int port;
+    int port, pid;
 	unsigned int sockfd, connfd, len; 
 	struct sockaddr_in servaddr, cli; 
 
@@ -112,15 +112,22 @@ int main(int argc, char **argv)
     while(1)
     {
         connfd = accept(sockfd, (SA*)&cli, &len); 
-        if (connfd < 0) { 
-            printf("server acccept failed...\n"); 
-            exit(0); 
-        } 
-        else
+        if ((pid = fork()) == -1)
+        {
+            close(connfd);
+            printf("Failed to accept new connection.\n");
+        }
+        else if(pid > 0)
+        {
+            close(connfd);
+        }
+        else if(pid == 0)
+        {
             printf("New connection...\n"); 
 
-        // Function for chatting between client and server 
-        func(connfd); 
+            // Function for chatting between client and server 
+            func(connfd); 
+        }
     }
 	// After chatting close the socket 
 	close(sockfd); 
