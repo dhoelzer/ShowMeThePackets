@@ -49,7 +49,7 @@ else
 	else
  		echo -e "${YELLOW}Updating..."
 		git reset --hard origin/master > /dev/null 2>&1
-		if git pull git@github.com:sans-course-workbooks/sec503-workbook.git > /dev/null 2>&1; then
+		if git pull > /dev/null 2>&1; then
 			echo -e "${GREEN}The SEC503 Workbook has been updated."
 		else
 			echo -e "${RED}Failed to update the SEC503 Workbook."
