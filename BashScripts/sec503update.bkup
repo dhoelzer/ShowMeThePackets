@@ -1,4 +1,5 @@
 #!/bin/bash
+# do not use anymore
 
 # Colored text
 RED='\033[0;31m'
