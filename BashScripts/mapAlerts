@@ -1,0 +1,21 @@
+#!/bin/bash
+# Copyright 2014, Enclave Forensics, Inc.
+
+# Check for arguments
+if [ $# -ne 1 ]; then
+  echo 'You must pass the name of a Snort alert log!'
+  exit 1
+fi
+# Check for the snort.rules file to use
+if [ ! -f snort.rules ]; then
+  echo There doesn\'t seem to be a snort.rules file in this directory...
+  exit 2
+fi
+
+# Process the alerts
+for i in $(cat $1 | cut -f 2 -d ':'); do
+  # Print the SID for this line:
+  echo -n "SID: $i -> "
+  # Find the first match in the snort.rules file and extract the message text:
+  grep -m 1 "sid:$i;" snort.rules | sed -e 's/.*msg://' | sed -e 's/;.*//'
+done

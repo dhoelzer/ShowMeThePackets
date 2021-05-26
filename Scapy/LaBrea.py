@@ -2,7 +2,7 @@ import sys
 import random
 from scapy.all import *
 
-version = 0.1
+version = 0.2
 
 def determineMACAddress():
   localMACs = [get_if_hwaddr(i) for i in get_if_list()]
@@ -16,12 +16,12 @@ def spoofIsAt(pkt):
   isAt.psrc=pkt[ARP].pdst
   isAt.hwsrc=sourceMAC
   isAt.op=2 #is-at
-  print "Taking over {0}!".format(isAt.psrc)
+  print("Taking over {0}!".format(isAt.psrc))
   send(isAt, verbose = 0)
 
 def spoofSYNACK(pkt):
   # Spoof the SYN ACK with a small window
-  if (pkt[IP].src in answered and answered[pkt[IP].src] == pkt[IP].sport):
+  if (pkt[IP].src in answered and answered[pkt[IP].src] == pkt[IP].dport):
     return
   response = IP()/TCP()
   response[IP].src = pkt[IP].dst  # Since Ether also has a .src, we have to qualify
@@ -33,7 +33,7 @@ def spoofSYNACK(pkt):
   response[TCP].window = random.randint(1,100)
   response[TCP].flags = 0x12
   send(response, verbose = 0)
-  answered[response[IP].dst] = response[TCP].dport
+  answered[response[IP].dst] = response[TCP].sport
 
 
 def spoofACK(pkt):
@@ -71,7 +71,7 @@ def packet_received(pkt):
 answered = dict()
 whohases=dict()
 sourceMAC = determineMACAddress()
-print "Scapified LaBrea"
-print "Version {0} - Copyright David Hoelzer / Enclave Forensics, Inc.".format(version)
-print "Using {0} as the source MAC.  If this is wrong, edit the code.".format(sourceMAC)
+print("Scapified LaBrea")
+print("Version {0} - Copyright David Hoelzer / Enclave Forensics, Inc.".format(version))
+print("Using {0} as the source MAC.  If this is wrong, edit the code.".format(sourceMAC))
 sniff(prn=packet_received, store=0)

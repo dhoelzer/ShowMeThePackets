@@ -3,6 +3,9 @@ import threading
 from scapy.all import *
 import sys
 
+# Listening interface
+ethernet = 'ens33'
+
 ones =   "11111111"
 twos =   "22222222"
 threes = "33333333"
@@ -40,20 +43,20 @@ def send_packets(chk):
 	send(packet6, verbose = False)
 
 def capture_response():
-	packets = sniff(filter=("icmp[0] = 0 and src host %s" % target), count = 1, iface = "eth0")
+	packets = sniff(filter=("icmp[0] = 0 and src host %s" % target), count = 1, iface = ethernet)
 	packet = packets[0]
-	print possible_payloads[str(packet.getlayer("ICMP").payload)]
+	print(str(possible_payloads[ICMP].payload))
 
 if len(sys.argv) < 2:
-	print "You must supply a target IP address."
+	print("You must supply a target IP address.")
 	sys.exit(1)
 target = sys.argv[1]
 
 for payload in possible_payloads:
 	packet = IP(dst=target)/ICMP(type=8,code=0)/payload
-        send(packet, verbose=False)
-	packet = packet.__class__(str(packet))
-	checksums.append((packet.getlayer(ICMP).chksum))
+	send(packet, verbose=False)
+#	packet = packet.__class__(str(packet))
+	checksums.append(packet[ICMP].chksum)
 
 # This is a fixup to the payload table because Google has a really
 # weird response, truncating the response.

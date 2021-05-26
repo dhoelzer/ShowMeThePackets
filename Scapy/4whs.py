@@ -1,11 +1,14 @@
 #!/usr/bin/python
 from scapy.all import *
 
+# Interface to listen
+ethernet = 'ens33'
+
 # My starting sequence number
 sequence=100
 
 # Wait for an inbound syn
-packets=sniff(filter="tcp[13]&0x02 != 0", count=1, iface="eth0")
+packets=sniff(filter="tcp[13]&0x02 != 0", count=1, iface=ethernet)
 syn = packets[0]
 my_ack = syn.getlayer("TCP").seq + 1
 dest = syn.getlayer("IP").src
