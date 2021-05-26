@@ -13,20 +13,20 @@
 
 from scapy.all import *
 
-dst="2001:db8::1"
+dst="10.128.0.11"
 dport=80
 
-ip=IPv6(dst=dst)
+ip=IP(dst=dst)
 sport=random.randint(49152,65535)
 isn=random.randint(0,4294967296)
-TCP_SYN=TCP(sport=sport, dport=dport, flags="S", seq=isn,options=[('MSS',1440)])
+TCP_SYN=TCP(sport=sport, dport=dport, flags="S", seq=isn,options=[('MSS',1460)])
 TCP_SYNACK=sr1(ip/TCP_SYN)
 my_ack = TCP_SYNACK.seq + 1
 TCP_ACK=TCP(sport=sport, dport=dport, flags="A", seq=isn+1, ack=my_ack)
 send(ip/TCP_ACK)
 my_payload1="GET / HTTP/1.1\r\nHost: www."
 my_payload2="sec503.com\r\n\r\n"
-TCP_PUSH=TCP(sport=sport,dport=dport, flags="PA", seq=isn+1,ack=my_ack)
+TCP_PUSH=TCP(sport=sport,dport=dport, flags="PAU", urgptr=30, seq=isn+1,ack=my_ack)
 send(ip/TCP_PUSH/my_payload1)
 TCP_PUSH=TCP(sport=sport,dport=dport, flags="PA", seq=isn+1+len(my_payload1),ack=my_ack)
 send(ip/TCP_PUSH/my_payload2)
