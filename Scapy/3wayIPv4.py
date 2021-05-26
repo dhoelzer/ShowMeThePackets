@@ -19,7 +19,7 @@ dport=80
 ip=IP(dst=dst)
 sport=random.randint(49152,65535)
 isn=random.randint(0,4294967296)
-TCP_SYN=TCP(sport=sport, dport=dport, flags="S", seq=isn,options=[('WScale',0)])
+TCP_SYN=TCP(sport=sport, dport=dport, flags="S", seq=isn,options=[('MSS',1460)])
 TCP_SYNACK=sr1(ip/TCP_SYN)
 my_ack = TCP_SYNACK.seq + 1
 TCP_ACK=TCP(sport=sport, dport=dport, flags="A", seq=isn+1, ack=my_ack)

@@ -31,7 +31,7 @@ my_ack = TCP_SYNACK.seq + 1
 TCP_ACK=TCP(sport=sport, dport=dport, flags="A", seq=isn+1, ack=my_ack)
 send(ip/TCP_ACK)
 my_payload1="GET / HTTP/1.1\r\nHost: www."
-my_payload2="sec546.com\r\n\r\n"
+my_payload2="sec503.com\r\n\r\n"
 my_payload3="secbad.com\r\n\r\n"
 TCP_PUSH=TCP(sport=sport,dport=dport, flags="PA", seq=isn+1,ack=my_ack)
 send(ip/TCP_PUSH/my_payload1)
