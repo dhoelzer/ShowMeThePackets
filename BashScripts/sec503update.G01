@@ -109,6 +109,13 @@ else
                 fi
         fi
         popd > /dev/null
+fi
 
-
+# Post processing script
+POST=/sec503/ShowMeThePackets/BashScripts/postprocess.sh
+if test -f "$POST"; then
+    /sec503/ShowMeThePackets/BashScripts/postprocess.sh
+    echo -e "${GREEN}Post processing activites are complete."
+else 
+    echo -e "${GREEN}No post processing activites needed."
 fi
