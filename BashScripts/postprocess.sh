@@ -12,6 +12,6 @@ PYTHON=/usr/bin/python
 if test -f "$PYTHON"; then
     echo -e "${GREEN}Post processing checks complete." 
 else 
-    echo "training" | sudo -S ln -s /usr/bin/python3 /usr/bin/python > /dev/null
+    echo "training" | sudo -S ln -s /usr/bin/python3 /usr/bin/python > /dev/null 2>&1
     echo -e "${GREEN}Python symbolic link added."
 fi
