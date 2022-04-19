@@ -17,7 +17,7 @@ for line in sys.stdin:
     (timestamp, host)=line.split(" ")
     ts = float(timestamp)
     if(binLimit == -1.0):
-	startingTime = ts
+        startingTime = ts
         binLimit = ts + window
         samples = 1
         timeDomain.append(0)
