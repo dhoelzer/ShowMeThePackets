@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 import argparse
 
-parser = argparse.ArgumentParser(description="Generate time domain and frequency domain plots of the input data.")
+parser = argparse.ArgumentParser(description="Generate time domain and frequency domain plots of the input data. requires two columns separated by a space: epoch_timestamp host")
 parser.add_argument('-w','--window', default=60.0, type=float, dest="window", help="Define the time window for the time domain histogram and frequency analysis.")
 window = parser.parse_args().window
 bin=0
@@ -14,8 +14,12 @@ binLimit=-1.0
 samples = 0
 timeDomain = []
 for line in sys.stdin:
-    (timestamp, host)=line.split(" ")
-    ts = float(timestamp)
+    try: 
+        (timestamp, host)=line.split(" ")
+        ts = float(timestamp)
+    except ValueError as e:
+        print(e)
+        continue
     if(binLimit == -1.0):
         startingTime = ts
         binLimit = ts + window
