@@ -1,4 +1,16 @@
 %A %B %d, %Y, %H:%M:%S
+%m-%d-%y
+%m-%d-%y %H:%M
+%m-%d-%y %H:%M:%S
+%m-%d-%Y
+%m-%d-%Y %H:%M
+%m-%d-%Y %H:%M:%S
+%y-%m-%d
+%y-%m-%d %H:%M
+%y-%m-%d %H:%M:%S
+%Y-%m-%d %H:%M:%S
+%Y-%m-%d %H:%M
+%Y-%m-%d
 %m/%d/%y %I %p
 %d,%m,%Y %H:%M
 %y/%d/%m %H:%M:%S
