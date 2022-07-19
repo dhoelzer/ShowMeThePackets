@@ -19,7 +19,7 @@ for key in keys:
 
 plt.figure(figsize=(12,6))
 ax=plt.axes()
-ax.plot(keys, data, ".")
+ax.scatter(keys, data, ".", s=0.5)
 
 min = min(data)
 max = max(data)
