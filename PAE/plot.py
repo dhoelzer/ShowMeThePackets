@@ -32,7 +32,7 @@ mean = numpy.mean(data)
 
 i = 0
 for key in sorted(dictionary, key=dictionary.get, reverse=True)[:10]:
-	ax.annotate(str(key),  xy=(key, dictionary[key]), xycoords='data', xytext=(10,400-(i*20)), textcoords='figure pixels',  arrowprops=dict(color="red",  width=0.01, headwidth=4))
+	plt.annotate(str(key),  xy=(key, dictionary[key]), xycoords='data', xytext=(10,400-(i*20)), textcoords='figure pixels',  arrowprops=dict(color="red",  width=0.01, headwidth=4))
 	i = i + 1
 if(output_filename):
 	plt.savefig(output_filename, dpi=150, format='png')
