@@ -37,6 +37,7 @@ if bin % 2 == 1:
     timeDomain.append(0)
 
 seconds = [float(n) * window for n in range(0,len(timeDomain))]
+plt.figure(figsize=(12,6))
 plt.plot(seconds,timeDomain)
 plt.title("Packets over time")
 plt.xlabel("Seconds")
