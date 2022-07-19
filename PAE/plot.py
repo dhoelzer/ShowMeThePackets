@@ -18,7 +18,7 @@ for key in keys:
 	data.append(dictionary[key])
 
 ax=plt.axes()
-ax.plot(keys, data, ".", s=1.0)
+ax.plot(keys, data, ".")
 
 min = min(data)
 max = max(data)
