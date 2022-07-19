@@ -18,7 +18,7 @@ for key in keys:
 	data.append(dictionary[key])
 
 plt.figure(figsize=(12,6))
-plt.scatter(keys, data, s=0.5)
+plt.scatter(keys, data, s=1)
 minimum = min(data)
 maximum = max(data)
 stddev = numpy.std(data)
