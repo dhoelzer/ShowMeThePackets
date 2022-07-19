@@ -17,7 +17,6 @@ data = []
 for key in keys:
 	data.append(dictionary[key])
 
-print(f'{len(data)}, {len(keys)}')
 plt.figure(figsize=(12,6))
 plt.scatter(keys, data, s=0.25)
 
