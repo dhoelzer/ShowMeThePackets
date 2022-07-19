@@ -18,15 +18,15 @@ for key in keys:
 	data.append(dictionary[key])
 
 plt.figure(figsize=(12,6))
-plt.scatter(keys, data, s=0.25)
+plt.scatter(keys, data, s=0.5)
 
 min = min(data)
 max = max(data)
 stddev = numpy.std(data)
 mean = numpy.mean(data)
-plt.plot([0,len(data)], [mean, mean], '-', c='r')
-plt.plot([0,len(data)], [mean+stddev, mean+stddev], '-', c='y')
-plt.plot([0, len(data)], [mean-stddev, mean-stddev], '-', c='y')
+plt.plot([0,max(keys)], [mean, mean], '-', c='r')
+plt.plot([0,max(keys)], [mean+stddev, mean+stddev], '-', c='y')
+plt.plot([0, max(keys)], [mean-stddev, mean-stddev], '-', c='y')
 plt.grid()
 #fudge = 2
 #if(len(sys.argv) > 1):
