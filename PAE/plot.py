@@ -18,7 +18,7 @@ for key in keys:
 	data.append(dictionary[key])
 
 ax=plt.axes()
-ax.plot(keys, data, ",")
+ax.plot(keys, data, ".", s=1.0)
 
 min = min(data)
 max = max(data)
@@ -34,6 +34,6 @@ for key in sorted(dictionary, key=dictionary.get, reverse=True)[:10]:
 	ax.annotate(str(key),  xy=(key, dictionary[key]), xycoords='data', xytext=(10,400-(i*20)), textcoords='figure pixels',  arrowprops=dict(color="red",  width=0.01, headwidth=4))
 	i = i + 1
 if(output_filename):
-	plt.savefig(output_filename, dpi=300, format='png')
+	plt.savefig(output_filename, dpi=150, format='png')
 else:
 	plt.show()		
