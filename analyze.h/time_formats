@@ -13,16 +13,16 @@
 %Y-%m-%d
 %m/%d/%y %I %p
 %d,%m,%Y %H:%M
-%y/%d/%m %H:%M:%S
-%y/%d/%m %H:%M
+%y/%m/%d %H:%M:%S
+%y/%m/%d %H:%M
 %m/%d/%y %H:%M:%S
 %m/%d/%y %H:%M
-%Y/%d/%m %H:%M:%S
-%Y/%d/%m %H:%M
+%Y/%m/%d %H:%M:%S
+%Y/%m/%d %H:%M
 %m/%d/%Y %H:%M:%S
 %m/%d/%Y %H:%M
-%Y/%d/%m
-%y/%d/%m
+%Y/%m/%d
+%y/%m/%d
 %m/%d/%Y
 %m/%d/%y
 %Y-%m-%d %H:%M:%S
