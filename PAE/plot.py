@@ -17,6 +17,7 @@ data = []
 for key in keys:
 	data.append(dictionary[key])
 
+plt.figure(figsize=(12,6))
 ax=plt.axes()
 ax.plot(keys, data, ".")
 
