@@ -25,9 +25,9 @@ max = max(data)
 stddev = numpy.std(data)
 mean = numpy.mean(data)
 
-fudge = 2
-if(len(sys.argv) > 1):
-	fudge = int(sys.argv[1])
+#fudge = 2
+#if(len(sys.argv) > 1):
+#	fudge = int(sys.argv[1])
 
 i = 0
 for key in sorted(dictionary, key=dictionary.get, reverse=True)[:10]:
