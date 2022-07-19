@@ -17,9 +17,9 @@ data = []
 for key in keys:
 	data.append(dictionary[key])
 
+print(f'{len(data)}, {len(keys)}')
 plt.figure(figsize=(12,6))
-ax=plt.axes()
-ax.plot(keys, data, ",")
+plt.plot(keys, data, ".")
 
 min = min(data)
 max = max(data)
