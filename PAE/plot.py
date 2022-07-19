@@ -25,9 +25,10 @@ min = min(data)
 max = max(data)
 stddev = numpy.std(data)
 mean = numpy.mean(data)
-plt.scatter(range(len(data)), [mean for _ in range(len(data))], c='r', s=0.01)
-plt.scatter(range(len(data)), [mean+stddev for _ in range(len(data))], c='y', s=0.01)
-plt.scatter(range(len(data)), [mean-stddev for _ in range(len(data))], c='y', s=0.01)
+plt.plot([0,len(data)], [mean, mean], '-', c='r')
+plt.plot([0,len(data)], [mean+stddev, mean+stddev], '-', c='y')
+plt.plot([0, len(data)], [mean-stddev, mean-stddev], '-', c='y')
+plt.grid()
 #fudge = 2
 #if(len(sys.argv) > 1):
 #	fudge = int(sys.argv[1])
