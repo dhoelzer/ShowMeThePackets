@@ -19,7 +19,7 @@ for key in keys:
 
 plt.figure(figsize=(12,6))
 plt.scatter(keys, data, s=0.5)
-
+print(keys)
 min = min(data)
 max = max(data)
 stddev = numpy.std(data)
