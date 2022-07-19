@@ -19,9 +19,8 @@ for key in keys:
 
 plt.figure(figsize=(12,6))
 plt.scatter(keys, data, s=0.5)
-print(keys)
-min = min(data)
-max = max(data)
+minimum = min(data)
+maximum = max(data)
 stddev = numpy.std(data)
 mean = numpy.mean(data)
 plt.plot([0,max(keys)], [mean, mean], '-', c='r')
