@@ -25,8 +25,9 @@ min = min(data)
 max = max(data)
 stddev = numpy.std(data)
 mean = numpy.mean(data)
-plt.scatter(range(len(data)), [mean for _ in range(len(data))], s=0.1)
-plt.scatter(range(len(data)), [mean+stddev for _ in range(len(data))], s=0.1)
+plt.scatter(range(len(data)), [mean for _ in range(len(data))], fmt='r', s=0.02)
+plt.scatter(range(len(data)), [mean+stddev for _ in range(len(data))], fmt='g', s=0.02)
+plt.scatter(range(len(data)), [mean-stddev for _ in range(len(data))], fmt='g', s=0.02)
 #fudge = 2
 #if(len(sys.argv) > 1):
 #	fudge = int(sys.argv[1])
