@@ -72,7 +72,7 @@ class AnomalyFinder():
         possibles = {}
         for protocol in self.classifiers:
             (model, threshold) = self.classifiers[protocol]
-            loss = tf.keras.losses.mae(x, model.predict(np.array([x]), verbose=False))
+            loss = tf.keras.losses.mae(x, model(np.array([x]), verbose=False))
             if(loss <= threshold):
                 closeness = 1 - float(loss / threshold)
                 possibles[protocol] = closeness * 100
