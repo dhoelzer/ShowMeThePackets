@@ -173,7 +173,7 @@ int main(int argc, char **argv)
             }
             long int this_dir_start_time = mktime(time_temp);
             int difference = start - this_dir_start_time;
-            if(difference >= 0 && difference < 86400) start_spooling = 1;
+            if(difference < 86400) start_spooling = 1;
             if(start_spooling)
                 {
                     char packet_path[1024];
