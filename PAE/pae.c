@@ -391,7 +391,7 @@ int get_header_length(unsigned char *packet)
 void usage()
 {
   printf("Usage:\n\tpae -r source_file [-h|i|s|c|d|S] [-q] [-a <anomalosity value>]\n\n");
-  printf("\t-h\tThis help\n");
+  printf("\t-h\tExtract and count occurrences of discrete source IP hosts.\n");
   printf("\t-i\tExtract and count occurrences of discrete IP ID values.\n");
   printf("\t-s\tExtract and count occurrences of discrete source port numbers.\n");
   printf("\t-c\tExtract and count occurrences of discrete IP checksum values.\n");
