@@ -23,7 +23,7 @@
  *  libpcap 0.4 (or higher) is required.
  */
 
-#define VERSION "0.7.1"
+#define VERSION "0.7.2"
 // Rev 0.1 - Initial Release
 // Rev 0.5 - Added checksum support
 //    We have developed a suspicion that there are checksums that will almost never appear
@@ -31,6 +31,7 @@
 // Rev 0.6 - Added more detailed help as requested.
 // Rev 0.7 - Expand payload analysis options; sort output by default.
 // Rev 0.7.1 - Bug fixes:x
+// Rev 0.7.2 - Bug fixes.
 
 
 
