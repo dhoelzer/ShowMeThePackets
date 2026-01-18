@@ -23,7 +23,7 @@
  *  libpcap 0.4 (or higher) is required.
  */
 
-#define VERSION "0.7.1"
+#define VERSION "0.7.2"
 // Rev 0.1 - Initial Release
 // Rev 0.5 - Added checksum support
 //    We have developed a suspicion that there are checksums that will almost never appear
@@ -31,6 +31,7 @@
 // Rev 0.6 - Added more detailed help as requested.
 // Rev 0.7 - Expand payload analysis options; sort output by default.
 // Rev 0.7.1 - Bug fixes:x
+// Rev 0.7.2 - Bug fixes.
 
 
 
@@ -124,7 +125,7 @@ unsigned int hash(char *key)
 
 int main(int argc, char **argv)
 {
-  char option;
+  int option;
   u_char buffer[4096];
   unsigned int modify_significant_bytes = 0;
 
@@ -390,7 +391,7 @@ int get_header_length(unsigned char *packet)
 void usage()
 {
   printf("Usage:\n\tpae -r source_file [-h|i|s|c|d|S] [-q] [-a <anomalosity value>]\n\n");
-  printf("\t-h\tThis help\n");
+  printf("\t-h\tExtract and count occurrences of discrete source IP hosts.\n");
   printf("\t-i\tExtract and count occurrences of discrete IP ID values.\n");
   printf("\t-s\tExtract and count occurrences of discrete source port numbers.\n");
   printf("\t-c\tExtract and count occurrences of discrete IP checksum values.\n");
