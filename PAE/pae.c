@@ -124,7 +124,7 @@ unsigned int hash(char *key)
 
 int main(int argc, char **argv)
 {
-  char option;
+  int option;
   u_char buffer[4096];
   unsigned int modify_significant_bytes = 0;
 
